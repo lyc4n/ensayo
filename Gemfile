@@ -8,6 +8,9 @@ gem 'sprockets-es6'
 gem 'coffee-script', '~> 2.4', '>= 2.4.1'
 gem 'uglifier', '~> 3.0', '>= 3.0.1'
 
+gem "sinatra-activerecord"
+gem "sqlite3"
+
 group :development do
   gem 'pry'
 end

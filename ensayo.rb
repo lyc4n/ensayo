@@ -8,14 +8,18 @@ require 'coffee-script'
 require 'sprockets/es6'
 require 'execjs'
 require 'pry'
+require 'sinatra/activerecord'
+Dir['./app/models/*.rb'].each{|file| require file}
 
 class Ensayo < Sinatra::Base
 
   configure :development do
     register Sinatra::Reloader
-    # also_reload '*', './app/views/*', './app/views/*/*'
   end
 
+  register Sinatra::ActiveRecordExtension
+
+  set :database, {adapter: "sqlite3", database: "ensayo.sqlite3"}
   set :views, Proc.new { File.join(root, 'app', 'views') }
   set :sprockets_env, Sprockets::Environment.new
   set :erb, :layout => :application
@@ -37,17 +41,17 @@ class Ensayo < Sinatra::Base
    erb :'react/react_tutorial'
   end
 
-  get '/react/react-tutorial-comments-json' do
-    json([
-      {id: 1, author: 'lyc4n', text: 'That is awesome piece of cake'},
-      {id: 2, author: 'anonymous', text: '*React* is love'}
-    ])
+  get '/comments-api' do
+    Comment.all.to_json
+  end
+
+  post '/comments-api' do
+    comment = Comment.create(author: params[:author], text: params[:text])
+    comment.to_json
   end
 
   get '/react/basketball-scoring' do
     erb :'react/basketball_scoring'
   end
-
-
 end
 

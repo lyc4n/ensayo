@@ -15,6 +15,26 @@ var CommentBox = React.createClass({
       }.bind(this)
     })
   },
+  handleCommentSubmit: function(comment){
+    var comments = this.state.data
+    comment.id = Date.now()
+    var newComments = comments.concat([comment])
+    this.setState({data: newComments})
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: comment,
+      success: function(data){
+        this.setState({data: data})
+      }.bind(this),
+      error: function(xhr, status, err){
+        console.error(this.props.url, status, err.toString())
+      }.bind(this)
+    })
+  },
+
+  // This is called after the component is loaded for the first time
   componentDidMount: function(){
     this.loadCommentsFromServer()
     setInterval(this.loadCommentsFromServer, this.props.pollInterval)
@@ -22,9 +42,9 @@ var CommentBox = React.createClass({
   render: function(){
     return(
       <div className='commentBox'>
-        <h1>Comments</h1>
+        <p className='title'>Comments:</p>
         <CommentList data={this.state.data} />
-        <CommentForm />
+        <CommentForm onCommentSubmit={this.handleCommentSubmit}/>
       </div>
     )
   }
@@ -48,16 +68,6 @@ var CommentList = React.createClass({
   }
 })
 
-var CommentForm = React.createClass({
-  render: function(){
-    return(
-      <div className='commentForm'>
-      Hello World, I am a CommentForm
-      </div>
-    )
-  }
-})
-
 var Comment = React.createClass({
   rawMarkup: function(){
     var md = new Remarkable()
@@ -76,16 +86,53 @@ var Comment = React.createClass({
 
 var CommentForm = React.createClass({
   getInitialState: function(){
-  return({author: '', text: ''})
-  }
+    return({author: '', text: ''})
+  },
+  handleAuthorChange: function(e){
+    this.setState({author: e.target.value})
+  },
+  handleTextChange: function(e){
+    this.setState({text: e.target.value})
+  },
+  handleSubmit: function(e){
+    e.preventDefault()
+    var author = this.state.author.trim();
+    var text   = this.state.text.trim();
+    if(!text || !author){
+      return;
+    }
 
+    this.props.onCommentSubmit({author: author, text: text})
+    this.setState({author: '', text: ''})
+  },
   render: function(){
     return(
-      <form className='commentForm'>
-        <input type='text' placeholder='Your name'>
-        <input type='text' placeholder='Say something'>
-        <input type='submit' value='Post'>
-      </form>
+      <div className='commentFormWrapper'>
+        <p className='title'>Add Comment:</p>
+        <form className='commentForm' onSubmit={this.handleSubmit}>
+          <p className='control'>
+            <input
+              type='text'
+              placeholder='Your name'
+              value={this.state.author}
+              onChange={this.handleAuthorChange}
+            />
+          </p>
+
+          <textarea
+            placeholder='Say something'
+            value={this.state.text}
+            onChange={this.handleTextChange}
+          />
+          <div className='columns is-mobile'>
+            <div className='column is-2 is-offset-10'>
+              <p className='control'>
+                <input type='submit' className='button' value='Post'/>
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
     )
   }
 })
@@ -94,12 +141,7 @@ class ReactTutorialPage extends EnsayoPage{
   loaded(){
     content = document.getElementById('content')
 
-    // data = [
-    //   {id: 1, author: 'lyc4n', text: 'That is awesome piece of cake'},
-    //   {id: 2, author: 'anonymous', text: '*React* is love'}]
-    //
-    // ReactDOM.render(<CommentBox data={data}/>, content);
-    ReactDOM.render(<CommentBox url='/react/react-tutorial-comments-json' pollInterval='2000' />, content);
+    ReactDOM.render(<CommentBox url='/comments-api' pollInterval='2000' />, content);
   }
 }
 reactTutorialPage = new ReactTutorialPage('react-tutorial-page')
