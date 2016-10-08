@@ -53,5 +53,9 @@ class Ensayo < Sinatra::Base
   get '/react/basketball-scoring' do
     erb :'react/basketball_scoring'
   end
+
+  get '/react/by_example' do
+    erb :'react/reactjs_by_example'
+  end
 end
 

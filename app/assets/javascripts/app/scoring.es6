@@ -1,8 +1,10 @@
 class BasketBallScoringPage extends EnsayoPage{
   loaded(){
     ReactDOM.render(
-      <b>This is the basketball scoring page</b>,
-      document.getElementById('basketball-scoring-page')
+      <b>TODO</b>,
+      document.getElementById('basketball-scoring-content')
     )
   }
 }
+
+var page = new BasketBallScoringPage('basketball-scoring-page')
