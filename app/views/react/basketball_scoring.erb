@@ -1,3 +1,59 @@
+<style type="text/css">
+.game-display{
+  border: 1px solid eee;
+  margin-top: 40px;
+}
+
+.game-display > .main-content{
+  display: flex;
+}
+
+.team-score{
+  width: 150px;
+  height: 200px;
+  background: black;
+  color: red;
+  text-align: center;
+  font-size: 100px;
+  position: relative;
+  display: inline-block;
+  flex-grow: 1;
+}
+.team-score:first-child{
+  border-right: 1px dashed red;
+}
+
+.team-name{
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  color: white;
+  background: red;
+  height: 50px;
+  text-align: center;
+  font-size: 40px;
+}
+.possession-marker{
+  width: 20px;
+  height: 20px;
+  float: left;
+  position: absolute;
+  left: 5px;
+  top: 5px;
+}
+.possession-marker:before{
+  float: left;
+  content: '';
+  width: 18px;
+  height: 18px;
+  background: red;
+  border-radius: 50%;
+  position: absolute;
+  left: 0px;
+}
+
+</style>
 <div id="basketball-scoring-page">
   <h2 class='title is-2'>React Basketball Scoring</h1>
   <hr>
